@@ -1,0 +1,26 @@
+{
+  "name": "gv-ticketer",
+  "version": "1.0.0",
+  "description": "GroupVine Ticketing Utility",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davebeyer/gv-ticketer.git"
+  },
+  "keywords": [
+    "GroupVine",
+    "ticket"
+  ],
+  "author": "Dave Beyer",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davebeyer/gv-ticketer/issues"
+  },
+  "homepage": "https://github.com/davebeyer/gv-ticketer#readme",
+  "dependencies": {
+    "moment": "^2.10.3"
+  }
+}
