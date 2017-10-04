@@ -1,7 +1,7 @@
-var dateUtil    = require("moment/moment");
-var crypto      = require("crypto");
+import crypto   from 'crypto-browserify';
 
-var TicketLifetimeDays = (365 * 5);
+var TicketLifetime_days = (365 * 5);
+var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
 
 export class Ticketer {
     private _dateSeed : string;
@@ -33,10 +33,10 @@ export class Ticketer {
         }
 
         let hash;
-        let md5  = crypto.createHash('md5');
-        hash = md5.update(dateSeed, 'utf-8')
-        hash = md5.update(this._getKey(dateSeed), 'utf-8')
-        hash = md5.update(body, 'utf-8')
+        let alg  = crypto.createHash('sha256');
+        hash = alg.update(dateSeed, 'utf-8')
+        hash = alg.update(this._getKey(dateSeed), 'utf-8')
+        hash = alg.update(body, 'utf-8')
 
         this._ticket = hash.digest('hex');
 
@@ -52,11 +52,11 @@ export class Ticketer {
 
         let i       = dateSeed.lastIndexOf('-');
         let dateStr = dateSeed.substring(0, i);
-        let dt      = dateUtil(dateStr, "DDMMMYY-HH:mm:ss");
 
-        dt.add(TicketLifetimeDays, 'days');
+        let dt      = new Date(dateStr);
+        let now     = new Date();
 
-        if (dt < dateUtil()) {
+        if (dt.getTime() + TicketLifetime_ms < now.getTime()) {
             return "Ticket has expired";
         }
 
@@ -92,16 +92,17 @@ export class Ticketer {
     }
 
     private _computeDateSeed(dt?:any) : string {
-        if (dt.getMonth || dt.month) {
-            if (! dateUtil.isMoment(dt) ) {
-                dt = new dateUtil(dt);
-            }
-        } else {
-            dt = new dateUtil();
+        if ((dt == null) || (typeof dt.getMonth === 'function')) {
+            dt = new Date();
         }
 
-        this._dateSeed  = dt.format("DDMMMYY-HH:mm:ss");
-        this._dateSeed += '-' + Math.floor(Math.random() * 10000);
+        this._dateSeed = dt.toISOString();
+
+        // Remove seconds and fractional seconds (maintaining 'Z' tz indicator)
+        this._dateSeed = this._dateSeed.replace(/\:\d+\.\d+Z/, 'Z');
+
+        // Add random seed to end
+        this._dateSeed += '-' + Math.floor(Math.random() * 1000);
 
         return this._dateSeed;
     }
