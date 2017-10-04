@@ -45,6 +45,9 @@ export class Ticketer {
 
         this._ticket = hash.digest('hex');
 
+        // Truncate to 28 bytes (to make it an SHA-256/224 hash with 224 bits)
+        this._ticket = this._ticket.substr(0, 28 * 2);
+
         // Add a version number to the start
         this._ticket = TicketPrefix + this._ticket;
 
