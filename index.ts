@@ -114,7 +114,7 @@ export class Ticketer {
         this._dateSeed = this._dateSeed.replace(/\:\d+\.\d+Z/, 'Z');
 
         // Add random seed to end
-        this._dateSeed += '-' + Math.floor(Math.random() * 1000);
+        this._dateSeed += '-' + Math.floor(Math.random() * 10000);
 
         return this._dateSeed;
     }
