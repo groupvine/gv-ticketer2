@@ -1,10 +1,25 @@
-import sha256             from 'crypto-js/sha256';
-import hexEncode          from 'crypto-js/enc-hex';
+let sha256                = require('crypto-js/sha256');
 
-var TicketLifetime_days = (365 * 5);
-var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
+const TicketLifetime_days = (365 * 5);
+const TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
 
-var TicketPrefix        = '2:';  // indicates version 2
+const TicketPrefix        = '2-';  // indicates version 2
+
+export function createHash(content:string[], numBytes?:number) {
+    if (numBytes == null) {
+        numBytes = 14;  // so 28 hex chars by default
+    }
+
+    let hash = sha256(content).toString();
+    
+    let len  = numBytes * 2;  // convert bytes to chars
+    if (hash.length > len) {
+        hash = hash.substr(0, len);
+    }
+
+    return hash;
+}
+
 
 export class Ticketer {
     private _dateSeed : string;
@@ -38,13 +53,8 @@ export class Ticketer {
             dateSeed = this.dateSeed();
         }
 
-        let hash = sha256([dateSeed, this._getKey(dateSeed), body]);
-
-        this._ticket = hash;  // ??
-        // ?? this._ticket = hash.digest('hex');
-
-        // Truncate to 14 bytes (to make it an SHA-256/112 hash with 112 bits)
-        this._ticket = this._ticket.substr(0, 14 * 2);
+        // Compute hash (with default length)
+        this._ticket = createHash([dateSeed, this._getKey(dateSeed), body]);
 
         // Add a version number to the start
         this._ticket = TicketPrefix + this._ticket;
@@ -59,10 +69,7 @@ export class Ticketer {
             body = this.tktBody(body);  
         }
 
-        let i       = dateSeed.lastIndexOf('-');
-        let dateStr = dateSeed.substring(0, i);
-
-        let dt      = new Date(dateStr);
+        let dt      = this._parseDateSeed(dateSeed);
         let now     = new Date();
 
         if (dt.getTime() + TicketLifetime_ms < now.getTime()) {
@@ -84,7 +91,7 @@ export class Ticketer {
         if (typeof dateSeed === 'string') {
             this._dateSeed = dateSeed;
         } else {
-            this._dateSeed = this._computeDateSeed(dateSeed);
+            this._dateSeed = this._buildDateSeed(dateSeed);
         }
 
         return this._dateSeed;
@@ -108,7 +115,8 @@ export class Ticketer {
         return body;
     }
 
-    private _computeDateSeed(dt?:any) : string {
+    // Return dateSeed string
+    private _buildDateSeed(dt?:any) : string {
         if ((dt == null) || (typeof dt.getMonth === 'function')) {
             dt = new Date();
         }
@@ -118,10 +126,25 @@ export class Ticketer {
         // Remove seconds and fractional seconds (maintaining 'Z' tz indicator)
         this._dateSeed = this._dateSeed.replace(/\:\d+\.\d+Z/, 'Z');
 
+        // Replace colons with periods (to avoid url-encoding of colons)
+        this._dateSeed = this._dateSeed.replace(/\:/g, '.');
+
         // Add random seed to end
         this._dateSeed += '-' + Math.floor(Math.random() * 10000);
 
         return this._dateSeed;
+    }
+
+    // Return Date object
+    private _parseDateSeed(dateSeed:string) : any {
+        // Remove random digits from end
+        let i       = dateSeed.lastIndexOf('-');
+        let dateStr = dateSeed.substring(0, i);
+
+        // Convert periods back to colons
+        dateStr     = dateStr.replace(/\./g, ':');
+
+        return new Date(dateStr);
     }
 
     private _getKey(dateSeed:any) : string {
