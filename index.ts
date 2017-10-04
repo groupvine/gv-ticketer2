@@ -1,4 +1,4 @@
-import { createHash }   from 'crypto-browserify';
+import { createHash:any } from 'crypto-browserify';
 
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
@@ -126,11 +126,11 @@ export class Ticketer {
         return this._dateSeed;
     }
 
-    private _getKey(dateSeed) : string {
-        // Fetch from datebase based on date 
-        // Datebase can store (date, key) pairs.  Search will
-        // return the key corresponding to the date that's the 
-        // closest one before the date of the next key.
-        return this._secrets[0].value;
+    private _getKey(dateSeed:any) : string {
+        // pass in a date or a date seed string (and convert to date)
+
+        // Lookup proper secret to use based on this date
+
+        return this._secrets[0].value;  // Currently only one secrets
     }
 }
