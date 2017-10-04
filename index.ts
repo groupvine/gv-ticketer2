@@ -1,4 +1,4 @@
-import { createHash:any } from 'crypto-browserify';
+import { createHash }     from 'crypto-browserify';
 
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
