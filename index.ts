@@ -6,12 +6,15 @@ var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24;
 export class Ticketer {
     private _dateSeed : string;
     private _ticket   : string;
-    private _secret   : string;
+    private _secrets  : any[];  // [{value : '..', date : '..'}]
 
-    constructor(secret:string) {
+    constructor(secrets:any[]) {
         this._dateSeed = null;
         this._ticket   = null;
-        this._secret   = secret;  
+        this._secrets  = secrets;  
+        if (this._secrets[0].value == null) {
+            console.error("Ticketer constructor: must specify at least one ticket secret");
+        }
     }
 
     // body is either the string ticket body, or an object
@@ -112,6 +115,6 @@ export class Ticketer {
         // Datebase can store (date, key) pairs.  Search will
         // return the key corresponding to the date that's the 
         // closest one before the date of the next key.
-        return this._secret;
+        return this._secrets[0].value;
     }
 }
