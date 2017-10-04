@@ -10,7 +10,9 @@ export function createHash(content:string[], numBytes?:number) {
         numBytes = 14;  // so 28 hex chars by default
     }
 
-    let hash = sha256(content).toString();
+    let contentStr = content.join();
+
+    let hash = sha256(contentStr).toString();
     
     let len  = numBytes * 2;  // convert bytes to chars
     if (hash.length > len) {
@@ -19,7 +21,6 @@ export function createHash(content:string[], numBytes?:number) {
 
     return hash;
 }
-
 
 export class Ticketer {
     private _dateSeed : string;
@@ -34,6 +35,30 @@ export class Ticketer {
             console.error("Ticketer constructor: must specify at least one ticket secret");
         }
     }
+
+    public createTicketedUrl(path:string, qArgs:any, dateSeed?:string) {
+        let args     = JSON.parse(JSON.stringify(qArgs)); // create copy
+
+        args['path'] = path;  // tempory, to compute ticket
+
+        args['tkt']  = this.ticket(args, dateSeed); 
+        args['date'] = this.getSeed();
+
+        delete args['path'];  // remove
+
+        let url   = path;
+        let names = Object.keys(args);
+
+        for (let i = 0; i < names.length; i++) {
+            if (i === 0) { url += '?'; }
+            else         { url += '&'; }
+
+            url += names[i] + '=' + encodeURIComponent(args[names[i]]);
+        }
+
+        return url;
+    }
+
 
     // body is either the string ticket body, or an object
     // converted to a string
