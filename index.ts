@@ -1,4 +1,4 @@
-import crypto   from 'crypto-browserify';
+import { createHash }   from 'crypto-browserify';
 
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
@@ -38,7 +38,7 @@ export class Ticketer {
         }
 
         let hash;
-        let alg  = crypto.createHash('sha256');
+        let alg  = createHash('sha256');
         hash = alg.update(dateSeed, 'utf-8')
         hash = alg.update(this._getKey(dateSeed), 'utf-8')
         hash = alg.update(body, 'utf-8')
