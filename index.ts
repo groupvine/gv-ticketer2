@@ -3,6 +3,8 @@ import crypto   from 'crypto-browserify';
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
 
+var TicketPrefix        = '2:';  // indicates version 2
+
 export class Ticketer {
     private _dateSeed : string;
     private _ticket   : string;
@@ -43,6 +45,9 @@ export class Ticketer {
 
         this._ticket = hash.digest('hex');
 
+        // Add a version number to the start
+        this._ticket = TicketPrefix + this._ticket;
+
         return this._ticket;
     }
 
@@ -61,6 +66,10 @@ export class Ticketer {
 
         if (dt.getTime() + TicketLifetime_ms < now.getTime()) {
             return "Ticket has expired";
+        }
+
+        if (ticket.substr(0, 2) != TicketPrefix) {
+            return "Invalid ticket version, should start with '" + TicketPrefix + "' for gv-ticket2"
         }
 
         if (ticket !== this.ticket(body, dateSeed)) {
