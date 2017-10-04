@@ -92,6 +92,10 @@ export class Ticketer {
         return this._dateSeed;
     }
 
+    public getSeed() : string {
+        return this._dateSeed;
+    }
+
     public tktBody(tktArgs:any) {
         let names = Object.keys(tktArgs);
         names.sort(); // put into fixed order
