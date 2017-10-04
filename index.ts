@@ -1,4 +1,5 @@
-let createHash          = require('crypto-browserify').createHash;
+import sha256             from 'crypto-js/sha256';
+import hexEncode          from 'crypto-js/enc-hex';
 
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
@@ -37,13 +38,10 @@ export class Ticketer {
             dateSeed = this.dateSeed();
         }
 
-        let hash;
-        let alg  = createHash('sha256');
-        hash = alg.update(dateSeed, 'utf-8')
-        hash = alg.update(this._getKey(dateSeed), 'utf-8')
-        hash = alg.update(body, 'utf-8')
+        let hash = sha256([dateSeed, this._getKey(dateSeed), body]);
 
-        this._ticket = hash.digest('hex');
+        this._ticket = hash;  // ??
+        // ?? this._ticket = hash.digest('hex');
 
         // Truncate to 14 bytes (to make it an SHA-256/112 hash with 112 bits)
         this._ticket = this._ticket.substr(0, 14 * 2);
