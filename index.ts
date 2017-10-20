@@ -1,4 +1,4 @@
-let sha256                = require('crypto-js/sha256');
+import * as sha256 from 'crypto-js/sha256.js';
 
 const TicketLifetime_days = (365 * 5);
 const TicketLifetime_ms   = TicketLifetime_days * 1000 * 60 * 60 * 24; 
@@ -32,7 +32,7 @@ export class Ticketer {
         this._ticket   = null;
         this._secrets  = secrets;  
         if (this._secrets[0].value == null) {
-            console.error("Ticketer constructor: must specify at least one ticket secret");
+            console.error("Ticketer constructor must be invoked with an array of at least one ticket secret");
         }
     }
 
@@ -63,9 +63,8 @@ export class Ticketer {
     // body is either the string ticket body, or an object
     // converted to a string
     public ticket(body:any, dateSeed?:string) : string {
-        if (typeof body !== 'string') {
-            body = this.tktBody(body);  
-        }
+        body     = this.tktBody(body);  
+        dateSeed = this.dateSeed(dateSeed);
 
         if (!body) {
             if (this._ticket) {
@@ -74,10 +73,6 @@ export class Ticketer {
             throw "Ticketer:ticket -- need to provide ticket body to compute ticket"
         }
         
-        if (!dateSeed) {
-            dateSeed = this.dateSeed();
-        }
-
         // Compute hash (with default length)
         this._ticket = createHash([dateSeed, this._getKey(dateSeed), body]);
 
@@ -90,9 +85,7 @@ export class Ticketer {
     // body is either the string ticket body, or an object
     // converted to a string
     public validate(ticket:string, body:any, dateSeed:string) : string {
-        if (typeof body !== 'string') {
-            body = this.tktBody(body);  
-        }
+        body = this.tktBody(body);  
 
         let dt      = this._parseDateSeed(dateSeed);
         let now     = new Date();
@@ -127,14 +120,27 @@ export class Ticketer {
     }
 
     public tktBody(tktArgs:any) {
-        let names = Object.keys(tktArgs);
+        if ( (typeof tktArgs === 'string') || (!isNaN(tktArgs)) || (tktArgs instanceof Date) ) {
+            return tktArgs.toString();
+        }
+
+        let names = Object.keys(tktArgs);  // works for objects or arrays
         names.sort(); // put into fixed order
 
         let body   = '';
+        let value;
         for (let i = 0; i < names.length; i++) {
-            if (tktArgs[names[i]] != null) {
+            value = tktArgs[names[i]];
+            if (value != null) {
                 if (body) { body += '|'; }
-                body += `${names[i]}=${tktArgs[names[i]]}`;
+
+                if ( (typeof value === 'string') || (!isNaN(value)) || (value instanceof Date) ) {
+                    body += `${names[i]}=${value}`;
+                } else if ( Array.isArray(value) ) {
+                    body += `${names[i]}=[${this.tktBody(value)}]`;
+                } else {
+                    body += `${names[i]}={${this.tktBody(value)}}`;
+                }
             }
         }
         return body;
@@ -142,7 +148,7 @@ export class Ticketer {
 
     // Return dateSeed string
     private _buildDateSeed(dt?:any) : string {
-        if ((dt == null) || (typeof dt.getMonth === 'function')) {
+        if ((dt == null) || (typeof dt.getMonth !== 'function')) {
             dt = new Date();
         }
 

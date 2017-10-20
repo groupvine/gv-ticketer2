@@ -4,7 +4,7 @@
   "description": "GroupVine Ticketing Utility v2",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jasmine",
     "build": "./node_modules/.bin/tsc *.ts --sourceMap --module commonjs",
     "postinstall": "npm run build"
   },
@@ -27,6 +27,7 @@
     "crypto-js": "^3.1.9-1"
   },
   "devDependencies": {
+    "jasmine": "^2.8.0",
     "typescript": "^2.3.2"
   }
 }
