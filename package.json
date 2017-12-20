@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "build": "./node_modules/.bin/tsc *.ts --sourceMap --module commonjs",
-    "postinstall": "npm run build"
+    "build": "./node_modules/.bin/tsc *.ts --sourceMap --module commonjs"
   },
   "repository": {
     "type": "git",
