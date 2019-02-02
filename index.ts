@@ -178,6 +178,7 @@ export class Ticketer {
         return new Date(dateStr);
     }
 
+    // @ts-ignore: unused parameter
     private _getKey(dateSeed:any) : string {
         // pass in a date or a date seed string (and convert to date)
 

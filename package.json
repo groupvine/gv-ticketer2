@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "build": "./node_modules/.bin/tsc *.ts --sourceMap --module commonjs",
+    "build": "tsc",
     "postinstall": "npm run build",
     "reinstall": "rm -rf node_modules && npm install"
   },
@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "jasmine": "^2.8.0",
-    "typescript": "^2.3.2"
+    "typescript": "^3.3.1"
   }
 }

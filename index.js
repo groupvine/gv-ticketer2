@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var sha256 = require("crypto-js/sha256.js");
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms = TicketLifetime_days * 1000 * 60 * 60 * 24;
@@ -141,6 +141,7 @@ var Ticketer = /** @class */ (function () {
         dateStr = dateStr.replace(/\./g, ':');
         return new Date(dateStr);
     };
+    // @ts-ignore: unused parameter
     Ticketer.prototype._getKey = function (dateSeed) {
         // pass in a date or a date seed string (and convert to date)
         // Lookup proper secret to use based on this date
