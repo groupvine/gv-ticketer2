@@ -65,6 +65,9 @@ var Ticketer = /** @class */ (function () {
     // body is either the string ticket body, or an object
     // converted to a string
     Ticketer.prototype.validate = function (ticket, body, dateSeed) {
+        if ((!ticket) || (!dateSeed)) {
+            return 'No ticket found';
+        }
         body = this.tktBody(body);
         var dt = this._parseDateSeed(dateSeed);
         var now = new Date();

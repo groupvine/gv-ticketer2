@@ -85,6 +85,7 @@ export class Ticketer {
     // body is either the string ticket body, or an object
     // converted to a string
     public validate(ticket:string, body:any, dateSeed:string) : string {
+        if ( (!ticket) || (!dateSeed) ) { return 'No ticket found'; }
         body = this.tktBody(body);  
 
         let dt      = this._parseDateSeed(dateSeed);
