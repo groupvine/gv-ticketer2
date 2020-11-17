@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Ticketer = exports.createHash = void 0;
 var sha256 = require("crypto-js/sha256.js");
 var TicketLifetime_days = (365 * 5);
 var TicketLifetime_ms = TicketLifetime_days * 1000 * 60 * 60 * 24;
