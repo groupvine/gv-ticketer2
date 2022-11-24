@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jasmine",
-    "build": "tsc",
+    "build": "./node_modules/.bin/tsc",
     "postinstall": "npm run build",
     "reinstall": "rm -rf node_modules && npm install"
   },
@@ -25,10 +25,10 @@
   },
   "homepage": "https://github.com/groupvine/gv-ticketer2#readme",
   "dependencies": {
-    "crypto-js": "^3.1.9-1"
+    "crypto-js": "^3.1.9-1",
+    "jasmine": "^4.5.0"
   },
   "devDependencies": {
-    "jasmine": "^2.8.0",
     "typescript": "^3.4.5"
   }
 }
