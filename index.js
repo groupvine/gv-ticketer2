@@ -110,13 +110,13 @@ var Ticketer = /** @class */ (function () {
                     body += '|';
                 }
                 if ((typeof value === 'string') || (!isNaN(value)) || (value instanceof Date)) {
-                    body += names[i] + "=" + value;
+                    body += "".concat(names[i], "=").concat(value);
                 }
                 else if (Array.isArray(value)) {
-                    body += names[i] + "=[" + this.tktBody(value) + "]";
+                    body += "".concat(names[i], "=[").concat(this.tktBody(value), "]");
                 }
                 else {
-                    body += names[i] + "={" + this.tktBody(value) + "}";
+                    body += "".concat(names[i], "={").concat(this.tktBody(value), "}");
                 }
             }
         }

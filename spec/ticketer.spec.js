@@ -35,7 +35,7 @@ describe("Ticketer", () => {
         var tktBody  = ticketer.tktBody(obj);
 
         // console.log(tktBody);
-        expect(tktBody).toEqual('age=17|date=Sun Jan 01 2017 00:00:00 GMT-0800 (PST)|type=rock');
+        expect(tktBody).toEqual('age=17|date=Sun Jan 01 2017 00:00:00 GMT-0800 (Pacific Standard Time)|type=rock');
     });
 
     it("should be able to generate a tkt body from a complex object", () => {
@@ -96,7 +96,7 @@ describe("Ticketer", () => {
     it("should be able to validate a ticket", () => {
         var obj = { 'age' : 18, type : 'rock' };
 
-        var dateSeed = '2017-07-01T07.00Z-1234';
+        var dateSeed = '2023-06-01T07.00Z-1234';
         var ticket   = ticketer.ticket(obj, dateSeed);
 
         // console.log(ticket);
